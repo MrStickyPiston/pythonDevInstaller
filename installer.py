@@ -1,10 +1,10 @@
-import os
 import logging
+import os
+import subprocess
 import sys
+import urllib.request
 
 import requests
-import urllib.request
-import progressbar
 
 pbar = None
 
@@ -35,8 +35,8 @@ FIREFOX_URL = "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64
 # DOWNLOAD
 def download_executables():
     def progress_bar(count_value, block_size, total, size=20, filled='█', empty='░'):
-        done = count_value/total*block_size
-        sys.stdout.write(f"\r[{round(done*100)}%] {int(done*size)*filled}{(size-int(done*size))*empty}")
+        done = count_value / total * block_size
+        sys.stdout.write(f"\r[{round(done * 100)}%] {int(done * size) * filled}{(size - int(done * size)) * empty}")
 
         if done >= 1:
             sys.stdout.write("\n")
@@ -52,6 +52,13 @@ def download_executables():
 
     logging.info("Downloading Firefox")
     urllib.request.urlretrieve(FIREFOX_URL, f"{exec_dir}\\firefox_setup.exe", progress_bar)
+
+
+def install_executables():
+    subprocess.Popen('python_setup.exe /quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
+    subprocess.Popen('pycharm_setup.exe /S /CONFIG=.\config\pycharm.config /D=c:\Pycharm')
+    subprocess.Popen('firefox_setup.exe /S /InstallDirectoryPath="C:\Firefox"')
+    subprocess.call('git_setup.exe /VERYSILENT /NORESTART /LOADINF=.\config\git.config')
 
 
 if __name__ == "__main__":
