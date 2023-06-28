@@ -45,6 +45,10 @@ PYCHARM_URL = f"https://download.jetbrains.com/python/pycharm-community-{PYCHARM
 GIT_URL = f"https://github.com/git-for-windows/git/releases/download/{git_r.url.split('/')[-1]}/Git-{GIT_VERSION}-64-bit.exe"
 FIREFOX_URL = "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=nl"
 
+# CONFIG
+PYCHARM_CONFIG = resource_path("config\pycharm.config")
+GIT_CONFIG = resource_path("config\git.config")
+
 
 # DOWNLOAD
 def download_executables():
@@ -70,11 +74,12 @@ def download_executables():
 
 def install_executables():
     logging.info("Installing collected files")
+
     subprocess.Popen(
         f'{exec_dir}\python_setup.exe /quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
-    subprocess.Popen(f'{exec_dir}\pycharm_setup.exe /S /CONFIG=.\config\pycharm.config /D=c:\Pycharm')
+    subprocess.Popen(f'{exec_dir}\pycharm_setup.exe /S /CONFIG={PYCHARM_CONFIG} /D=c:\Pycharm')
     subprocess.Popen(f'{exec_dir}\\firefox_setup.exe /S /InstallDirectoryPath="C:\Firefox"')
-    subprocess.call(f'{exec_dir}\git_setup.exe /VERYSILENT /NORESTART /LOADINF=.\config\git.config')
+    subprocess.call(f'{exec_dir}\git_setup.exe /VERYSILENT /NORESTART /LOADINF={GIT_CONFIG}')
 
     logging.info("Configurating Git")
     os.system(f'C:\Git\\bin\git.exe config --global user.email "{GIT_EMAIL}"')
