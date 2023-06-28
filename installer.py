@@ -15,6 +15,10 @@ try:
 except FileExistsError:
     pass
 
+# ACCOUNT
+GIT_EMAIL = "mr.sticky.piston@gmail.com"
+GIT_USER = "sticky"
+
 # VERSIONS
 git_url = 'https://github.com/git-for-windows/git/releases/latest'
 git_r = requests.get(git_url)
@@ -55,12 +59,16 @@ def download_executables():
 
 
 def install_executables():
-    subprocess.Popen('python_setup.exe /quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
-    subprocess.Popen('pycharm_setup.exe /S /CONFIG=.\config\pycharm.config /D=c:\Pycharm')
-    subprocess.Popen('firefox_setup.exe /S /InstallDirectoryPath="C:\Firefox"')
-    subprocess.call('git_setup.exe /VERYSILENT /NORESTART /LOADINF=.\config\git.config')
+    subprocess.Popen(
+        f'{exec_dir}\python_setup.exe /quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
+    subprocess.Popen(f'{exec_dir}\pycharm_setup.exe /S /CONFIG=.\config\pycharm.config /D=c:\Pycharm')
+    subprocess.Popen(f'{exec_dir}\\firefox_setup.exe /S /InstallDirectoryPath="C:\Firefox"')
+    subprocess.call(f'{exec_dir}\git_setup.exe /VERYSILENT /NORESTART /LOADINF=.\config\git.config')
+    os.system(f'C:\Git\\bin\git.exe config --global user.email "{GIT_EMAIL}"')
+    os.system(f'C:\Git\\bin\git.exe config --global user.name {GIT_USER}')
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    download_executables()
+    # download_executables()
+    install_executables()
