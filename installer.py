@@ -6,9 +6,19 @@ import urllib.request
 
 import requests
 
-pbar = None
 
-exec_dir = f"{os.getcwd()}\\exec"
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+pbar = None
+exec_dir = resource_path(".\exec\\")
 
 try:
     os.mkdir(exec_dir)
@@ -59,16 +69,20 @@ def download_executables():
 
 
 def install_executables():
+    logging.info("Installing collected files")
     subprocess.Popen(
         f'{exec_dir}\python_setup.exe /quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
     subprocess.Popen(f'{exec_dir}\pycharm_setup.exe /S /CONFIG=.\config\pycharm.config /D=c:\Pycharm')
     subprocess.Popen(f'{exec_dir}\\firefox_setup.exe /S /InstallDirectoryPath="C:\Firefox"')
     subprocess.call(f'{exec_dir}\git_setup.exe /VERYSILENT /NORESTART /LOADINF=.\config\git.config')
+
+    logging.info("Configurating Git")
     os.system(f'C:\Git\\bin\git.exe config --global user.email "{GIT_EMAIL}"')
     os.system(f'C:\Git\\bin\git.exe config --global user.name {GIT_USER}')
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    # download_executables()
+    download_executables()
     install_executables()
+    input("Press enter to exit")
