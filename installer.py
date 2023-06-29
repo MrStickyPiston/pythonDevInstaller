@@ -1,3 +1,4 @@
+import ssl
 import logging
 import os
 import subprocess
@@ -19,6 +20,7 @@ def resource_path(relative_path):
 
 pbar = None
 exec_dir = resource_path(".\exec\\")
+ssl._create_default_https_context = ssl._create_unverified_context
 
 try:
     os.mkdir(exec_dir)
