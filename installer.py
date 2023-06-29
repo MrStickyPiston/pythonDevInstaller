@@ -28,8 +28,8 @@ except FileExistsError:
     pass
 
 # ACCOUNT
-GIT_EMAIL = "mr.sticky.piston@gmail.com"
-GIT_USER = "sticky"
+GIT_EMAIL = input("Enter git email: ")
+GIT_USER = input("Enter git username: ")
 
 # VERSIONS
 git_url = 'https://github.com/git-for-windows/git/releases/latest'
