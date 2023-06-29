@@ -3,8 +3,8 @@ name: Build Windows/Linux with pyinstaller
 on:
   push:
     branches: master
-    paths: 
-      - src/**
+
+
     
 
 jobs:
