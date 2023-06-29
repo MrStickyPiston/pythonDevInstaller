@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['C:/Users/605091/PycharmProjects/pythonDevInstaller/installer.py'],
+    ['installer.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:/Users/605091/PycharmProjects/pythonDevInstaller/config', 'config/')],
+    datas=[('./config', 'config/')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
