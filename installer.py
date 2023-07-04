@@ -109,5 +109,5 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     download_executables()
     install_executables()
-    logging.info("Done installing.")
+    logging.info("Finished installing all tools")
     input("Press enter to exit")
