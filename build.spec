@@ -8,7 +8,7 @@ a = Analysis(
     ['installer.py'],
     pathex=[],
     binaries=[],
-    datas=[('./config', 'config/')],
+    datas=[('./config', 'config/'), ('./assets', 'assets/')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

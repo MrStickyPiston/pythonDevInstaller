@@ -1,3 +1,5 @@
+import logging
+
 import installer
 
 logging.basicConfig(level=logging.INFO) 
