@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import urllib.request
+import webbrowser
 
 import requests
 
@@ -41,11 +42,17 @@ PYCHARM_VERSION = '2023.1.3'
 GIT_VERSION = git_v
 FIREFOX_VERSION = 'latest'
 
+DARK_READER_VERSION = '4.9.64'
+ADBLOCK_ULTIMATE_VERSION = '3.7.28'
+
 # URLS
 PYTHON_URL = f"https://www.python.org/ftp/python/{PYTHON_VERSION}/python-{PYTHON_VERSION}-amd64.exe"
 PYCHARM_URL = f"https://download.jetbrains.com/python/pycharm-community-{PYCHARM_VERSION}.exe"
 GIT_URL = f"https://github.com/git-for-windows/git/releases/download/{git_r.url.split('/')[-1]}/Git-{GIT_VERSION}-64-bit.exe"
 FIREFOX_URL = "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=nl"
+
+DARK_READER_URL = f"https://addons.mozilla.org/firefox/downloads/file/4128489/darkreader-{DARK_READER_VERSION}.xpi"
+ADBLOCK_ULTIMATE_URL = f"https://addons.mozilla.org/firefox/downloads/file/4113999/adblocker_ultimate-{ADBLOCK_ULTIMATE_VERSION}.xpi"
 
 # CONFIG
 PYCHARM_CONFIG = resource_path("config\pycharm.config")
@@ -86,6 +93,9 @@ def install_executables():
     logging.info("Configurating Git")
     os.system(f'C:\Git\\bin\git.exe config --global user.email "{GIT_EMAIL}"')
     os.system(f'C:\Git\\bin\git.exe config --global user.name {GIT_USER}')
+
+    webbrowser.open(DARK_READER_URL)
+    webbrowser.open(ADBLOCK_ULTIMATE_URL)
 
 
 if __name__ == "__main__":
