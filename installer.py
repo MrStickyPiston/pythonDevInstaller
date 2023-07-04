@@ -94,12 +94,20 @@ def install_executables():
     os.system(f'C:\Git\\bin\git.exe config --global user.email "{GIT_EMAIL}"')
     os.system(f'C:\Git\\bin\git.exe config --global user.name {GIT_USER}')
 
-    webbrowser.open(DARK_READER_URL)
-    webbrowser.open(ADBLOCK_ULTIMATE_URL)
+    logging.info("Installing Firefox addons")
+    with open(resource_path('./assets/addons.html')) as baseHTML:
+        addonsHTML = baseHTML.read().replace("{DARK_READER}", DARK_READER_URL).replace("{ADBLOCK_ULTIMATE}",
+                                                                                       ADBLOCK_ULTIMATE_URL)
+    with open(resource_path('./addons.html'), 'w') as filledHTML:
+        filledHTML.write(addonsHTML)
+
+    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser("C:\\firefox\\firefox.exe"))
+    webbrowser.get('firefox').open('file://' + resource_path("./addons.html"))
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     download_executables()
     install_executables()
+    logging.info("Done installing.")
     input("Press enter to exit")
