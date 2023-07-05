@@ -1,11 +1,6 @@
 name: Build Windows with pyinstaller 
 
-on:
-  push:
-    branches: master
-
-
-    
+on: push
 
 jobs:
   build-windows:
