@@ -143,7 +143,7 @@ def install_executables():
     FIREFOX_PROCESS.start()
 
 
-if __name__ == "__main__":
+def __main__():
     logging.basicConfig(level=logging.INFO)
 
     logging.info("##### Collecting data #####")
@@ -163,3 +163,6 @@ if __name__ == "__main__":
 
     logging.info("Finished installing all tools")
     input("Press enter to exit")
+
+if __name__ == "__main__":
+    __main__()

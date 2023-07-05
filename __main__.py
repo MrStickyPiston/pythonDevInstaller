@@ -1,9 +1,4 @@
-import logging
-
 import installer
 
-logging.basicConfig(level=logging.INFO) 
-installer.download_executables() 
-installer.install_executables() 
-input("Press enter to exit")
-
+if __name__ == "__main__":
+    installer.__main__()
