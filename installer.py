@@ -35,9 +35,8 @@ except FileExistsError:
     pass
 
 # ACCOUNT
-GIT_EMAIL = None
-GIT_USER = None
-
+global GIT_EMAIL
+global GIT_USER
 
 # VERSIONS
 git_url = 'https://github.com/git-for-windows/git/releases/latest'
@@ -144,6 +143,9 @@ def install_executables():
 
 
 def __main__():
+    global GIT_EMAIL
+    global GIT_USER
+
     logging.basicConfig(level=logging.INFO)
 
     logging.info("##### Collecting data #####")
