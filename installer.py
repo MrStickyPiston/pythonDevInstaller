@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+import threading
 import urllib.request
 import webbrowser
 
@@ -19,7 +20,12 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-pbar = None
+# Environment
+global PYTHON_PROCESS
+global PYCHARM_PROCESS
+global GIT_PROCESS
+global FIREFOX_PROCESS
+
 exec_dir = resource_path(".\exec\\")
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -29,8 +35,8 @@ except FileExistsError:
     pass
 
 # ACCOUNT
-GIT_EMAIL = input("Enter git email: ")
-GIT_USER = input("Enter git username: ")
+global GIT_EMAIL
+global GIT_USER
 
 # VERSIONS
 git_url = 'https://github.com/git-for-windows/git/releases/latest'
@@ -82,32 +88,83 @@ def download_executables():
 
 
 def install_executables():
-    logging.info("Installing collected files")
-
-    subprocess.Popen(
-        f'{exec_dir}\python_setup.exe /quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
-    subprocess.Popen(f'{exec_dir}\pycharm_setup.exe /S /CONFIG={PYCHARM_CONFIG} /D=c:\Pycharm')
-    subprocess.Popen(f'{exec_dir}\\firefox_setup.exe /S /InstallDirectoryPath="C:\Firefox"')
-    subprocess.call(f'{exec_dir}\git_setup.exe /VERYSILENT /NORESTART /LOADINF={GIT_CONFIG}')
-
-    logging.info("Configurating Git")
-    os.system(f'C:\Git\\bin\git.exe config --global user.email "{GIT_EMAIL}"')
-    os.system(f'C:\Git\\bin\git.exe config --global user.name {GIT_USER}')
-
-    logging.info("Installing Firefox addons")
-    with open(resource_path('./assets/addons.html')) as baseHTML:
-        addonsHTML = baseHTML.read().replace("{DARK_READER}", DARK_READER_URL).replace("{ADBLOCK_ULTIMATE}",
-                                                                                       ADBLOCK_ULTIMATE_URL)
-    with open(resource_path('./addons.html'), 'w') as filledHTML:
-        filledHTML.write(addonsHTML)
-
-    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser("C:\\firefox\\firefox.exe"))
-    webbrowser.get('firefox').open('file://' + resource_path("./addons.html"))
+    global PYTHON_PROCESS
+    global PYCHARM_PROCESS
+    global GIT_PROCESS
+    global FIREFOX_PROCESS
 
 
-if __name__ == "__main__":
+    def install_python():
+        logging.info("Installing Python")
+        subprocess.call(
+            f'{exec_dir}\python_setup.exe /quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
+        logging.info("Finished installing Python")
+
+    def install_pycharm():
+        logging.info("Installing Pycharm")
+        subprocess.call(f'{exec_dir}\pycharm_setup.exe /S /CONFIG={PYCHARM_CONFIG} /D=c:\Pycharm')
+        logging.info("Finished installing Pycharm")
+
+    def install_firefox():
+        logging.info("Installing Firefox")
+        subprocess.call(f'{exec_dir}\\firefox_setup.exe /S /InstallDirectoryPath="C:\Firefox"')
+
+        logging.info("Installing Firefox addons")
+        with open(resource_path('./assets/addons.html')) as baseHTML:
+            addonsHTML = baseHTML.read().replace("{DARK_READER}", DARK_READER_URL).replace("{ADBLOCK_ULTIMATE}",
+                                                                                           ADBLOCK_ULTIMATE_URL)
+        with open(resource_path('./addons.html'), 'w') as filledHTML:
+            filledHTML.write(addonsHTML)
+
+        webbrowser.register('firefox', None, webbrowser.BackgroundBrowser("C:\\firefox\\firefox.exe"))
+        webbrowser.get('firefox').open('file://' + resource_path("./addons.html"))
+
+        logging.info("Finished installing Firefox")
+
+    def install_git():
+        logging.info("Installing Git")
+        subprocess.call(f'{exec_dir}\git_setup.exe /VERYSILENT /NORESTART /LOADINF={GIT_CONFIG}')
+
+        logging.info("Configurating Git")
+        os.system(f'C:\Git\\bin\git.exe config --global user.email "{GIT_EMAIL}"')
+        os.system(f'C:\Git\\bin\git.exe config --global user.name {GIT_USER}')
+
+        logging.info(f"Finished installing Git (User: {GIT_USER}, Email: {GIT_EMAIL})")
+
+    PYTHON_PROCESS = threading.Thread(target=install_python)
+    PYCHARM_PROCESS = threading.Thread(target=install_pycharm)
+    GIT_PROCESS = threading.Thread(target=install_git)
+    FIREFOX_PROCESS = threading.Thread(target=install_firefox)
+
+    PYTHON_PROCESS.start()
+    PYCHARM_PROCESS.start()
+    GIT_PROCESS.start()
+    FIREFOX_PROCESS.start()
+
+
+def __main__():
+    global GIT_EMAIL
+    global GIT_USER
+
     logging.basicConfig(level=logging.INFO)
+
+    logging.info("##### Collecting data #####")
+    GIT_EMAIL = input("Enter git email: ")
+    GIT_USER = input("Enter git username: ")
+
+    logging.info("##### Downloading files #####")
     download_executables()
+
+    logging.info("##### Installing collected files #####")
     install_executables()
+
+    PYTHON_PROCESS.join()
+    PYCHARM_PROCESS.join()
+    GIT_PROCESS.join()
+    FIREFOX_PROCESS.join()
+
     logging.info("Finished installing all tools")
     input("Press enter to exit")
+
+if __name__ == "__main__":
+    __main__()
