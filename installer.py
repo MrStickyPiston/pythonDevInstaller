@@ -16,7 +16,7 @@ class Installer:
                  version: str,
                  url: str,
                  options: str,
-                 config: str = None):
+                 config: str = "None"):
         self.name = name
 
         self.version = version
@@ -30,13 +30,13 @@ class Installer:
     def progress_bar(self, count_value, block_size, total, size=20, filled='█', empty='░'):
         done = count_value / total * block_size
         sys.stdout.write(
-            f"\rDownloading {self.name} [{int(done * size) * filled}{(size - int(done * size)) * empty}] ({round(done * 100)}%)")
+            f"\r{'Downloading ' + self.name:<20} [{int(done * size) * filled}{(size - int(done * size)) * empty}] ({round(done * 100)}%)")
 
         if done >= 1:
             sys.stdout.write("\n")
 
     def download(self):
-        urllib.request.urlretrieve(self.url, f"{exec_dir}\\python_setup.exe", self.progress_bar)
+        urllib.request.urlretrieve(self.url, f"{exec_dir}\\{self.name}_setup.exe", self.progress_bar)
 
     def _install_thread(self):
         subprocess.call(f'{exec_dir}\\{self.name}_setup.exe {self.options}')
@@ -98,41 +98,15 @@ firefox_installer = Installer(name='Firefox',
 
 installers = [python_installer, pycharm_installer, git_installer, firefox_installer]
 
-# Environment
-global PYTHON_PROCESS
-global PYCHARM_PROCESS
-global GIT_PROCESS
-global FIREFOX_PROCESS
-
 # ACCOUNT
 global GIT_EMAIL
 global GIT_USER
 
-# VERSIONS
-git_url = 'https://github.com/git-for-windows/git/releases/latest'
-git_r = requests.get(git_url)
-git_v = git_r.url.split('/')[-1].split('v')[1].split(".windows")[0]
-
-PYTHON_VERSION = '3.11.4'
-PYCHARM_VERSION = '2023.1.3'
-GIT_VERSION = git_v
-FIREFOX_VERSION = 'latest'
-
 DARK_READER_VERSION = '4.9.64'
 ADBLOCK_ULTIMATE_VERSION = '3.7.28'
 
-# URLS
-PYTHON_URL = f"https://www.python.org/ftp/python/{PYTHON_VERSION}/python-{PYTHON_VERSION}-amd64.exe"
-PYCHARM_URL = f"https://download.jetbrains.com/python/pycharm-community-{PYCHARM_VERSION}.exe"
-GIT_URL = f"https://github.com/git-for-windows/git/releases/download/{git_r.url.split('/')[-1]}/Git-{GIT_VERSION}-64-bit.exe"
-FIREFOX_URL = "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=nl"
-
 DARK_READER_URL = f"https://addons.mozilla.org/firefox/downloads/file/4128489/darkreader-{DARK_READER_VERSION}.xpi"
 ADBLOCK_ULTIMATE_URL = f"https://addons.mozilla.org/firefox/downloads/file/4113999/adblocker_ultimate-{ADBLOCK_ULTIMATE_VERSION}.xpi"
-
-# CONFIG
-PYCHARM_CONFIG = resource_path("config\pycharm.config")
-GIT_CONFIG = resource_path("config\git.config")
 
 
 # DOWNLOAD
@@ -144,24 +118,11 @@ def download_executables():
         if done >= 1:
             sys.stdout.write("\n")
 
-    logging.info("Downloading Python")
-    urllib.request.urlretrieve(PYTHON_URL, f"{exec_dir}\\python_setup.exe", progress_bar)
-
-    logging.info("Downloading Pycharm")
-    urllib.request.urlretrieve(PYCHARM_URL, f"{exec_dir}\\pycharm_setup.exe", progress_bar)
-
-    logging.info("Downloading Git")
-    urllib.request.urlretrieve(GIT_URL, f"{exec_dir}\\git_setup.exe", progress_bar)
-
-    logging.info("Downloading Firefox")
-    urllib.request.urlretrieve(FIREFOX_URL, f"{exec_dir}\\firefox_setup.exe", progress_bar)
+    for i in installers:
+        i.download()
 
 
 def install_executables():
-    global PYTHON_PROCESS
-    global PYCHARM_PROCESS
-    global GIT_PROCESS
-    global FIREFOX_PROCESS
 
     def install_python():
         logging.info("Installing Python")
@@ -225,12 +186,7 @@ def __main__():
     download_executables()
 
     logging.info("##### Installing collected files #####")
-    install_executables()
-
-    PYTHON_PROCESS.join()
-    PYCHARM_PROCESS.join()
-    GIT_PROCESS.join()
-    FIREFOX_PROCESS.join()
+    #install_executables()
 
     logging.info("Finished installing all tools")
     input("Press enter to exit")
