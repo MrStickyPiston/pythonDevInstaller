@@ -17,7 +17,6 @@ class Installer:
                  url: str,
                  options: str,
                  config: str = None):
-
         self.name = name
 
         self.version = version
@@ -68,6 +67,12 @@ try:
 except FileExistsError:
     pass
 
+# VERSIONS
+git_url = 'https://github.com/git-for-windows/git/releases/latest'
+git_r = requests.get(git_url)
+git_v = git_r.url.split('/')[-1].split('v')[1].split(".windows")[0]
+git_url = f'https://github.com/git-for-windows/git/releases/download/{git_r.url.split("/")[-1]}/Git-{{VERSION}}-64-bit.exe'
+
 python_installer = Installer(name='Python',
                              version='3.11.4',
                              url='https://www.python.org/ftp/python/{VERSION}/python-{VERSION}-amd64.exe',
@@ -76,8 +81,22 @@ python_installer = Installer(name='Python',
 pycharm_installer = Installer(name='Pycharm',
                               version='2023.1.3',
                               url='https://download.jetbrains.com/python/pycharm-community-{VERSION}.exe',
-                              options='{exec_dir}\pycharm_setup.exe /S /CONFIG={CONFIG} /D=c:\Pycharm',
+                              options='/S /CONFIG={CONFIG} /D=c:\Pycharm',
                               config=resource_path('config\pycharm.config'))
+
+git_installer = Installer(name='Git',
+                          version=git_v,
+                          url=git_url,
+                          options='/VERYSILENT /NORESTART /LOADINF={CONFIG}',
+                          config=resource_path('config\git.config'))
+
+firefox_installer = Installer(name='Firefox',
+                              version='latest',
+                              url='https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=nl',
+                              options='/VERYSILENT /NORESTART /LOADINF={CONFIG}',
+                              config=resource_path('config\git.config'))
+
+installers = [python_installer, pycharm_installer, git_installer, firefox_installer]
 
 # Environment
 global PYTHON_PROCESS
