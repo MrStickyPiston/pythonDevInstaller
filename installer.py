@@ -10,6 +10,46 @@ import webbrowser
 import requests
 
 
+class Installer:
+    def __init__(self,
+                 name: str,
+                 version: str,
+                 url: str,
+                 options: str,
+                 config: str = None):
+
+        self.name = name
+
+        self.version = version
+        self.url = url.replace("{VERSION}", self.version)
+
+        self.options = options.replace("{CONFIG}", config)
+        self.config = config
+
+        self.thread = None
+
+    def progress_bar(self, count_value, block_size, total, size=20, filled='█', empty='░'):
+        done = count_value / total * block_size
+        sys.stdout.write(
+            f"\rDownloading {self.name} [{int(done * size) * filled}{(size - int(done * size)) * empty}] ({round(done * 100)}%)")
+
+        if done >= 1:
+            sys.stdout.write("\n")
+
+    def download(self):
+        urllib.request.urlretrieve(self.url, f"{exec_dir}\\python_setup.exe", self.progress_bar)
+
+    def _install_thread(self):
+        subprocess.call(f'{exec_dir}\\{self.name}_setup.exe {self.options}')
+
+    def install(self):
+        self.thread = threading.Thread(target=self._install_thread())
+        self.thread.start()
+
+    def wait(self):
+        self.thread.join()
+
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -20,12 +60,6 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-# Environment
-global PYTHON_PROCESS
-global PYCHARM_PROCESS
-global GIT_PROCESS
-global FIREFOX_PROCESS
-
 exec_dir = resource_path(".\exec\\")
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -33,6 +67,23 @@ try:
     os.mkdir(exec_dir)
 except FileExistsError:
     pass
+
+python_installer = Installer(name='Python',
+                             version='3.11.4',
+                             url='https://www.python.org/ftp/python/{VERSION}/python-{VERSION}-amd64.exe',
+                             options='/quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
+
+pycharm_installer = Installer(name='Pycharm',
+                              version='2023.1.3',
+                              url='https://download.jetbrains.com/python/pycharm-community-{VERSION}.exe',
+                              options='{exec_dir}\pycharm_setup.exe /S /CONFIG={CONFIG} /D=c:\Pycharm',
+                              config=resource_path('config\pycharm.config'))
+
+# Environment
+global PYTHON_PROCESS
+global PYCHARM_PROCESS
+global GIT_PROCESS
+global FIREFOX_PROCESS
 
 # ACCOUNT
 global GIT_EMAIL
@@ -92,7 +143,6 @@ def install_executables():
     global PYCHARM_PROCESS
     global GIT_PROCESS
     global FIREFOX_PROCESS
-
 
     def install_python():
         logging.info("Installing Python")
@@ -165,6 +215,7 @@ def __main__():
 
     logging.info("Finished installing all tools")
     input("Press enter to exit")
+
 
 if __name__ == "__main__":
     __main__()
