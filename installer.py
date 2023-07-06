@@ -6,6 +6,7 @@ import sys
 import threading
 import urllib.request
 import webbrowser
+from builtins import function
 
 import requests
 
@@ -16,6 +17,7 @@ class Installer:
                  version: str,
                  url: str,
                  options: str,
+                 post: function = None,
                  config: str = "None"):
         self.name = name
 
@@ -26,6 +28,11 @@ class Installer:
         self.config = config
 
         self.thread = None
+
+        if self.post is not None:
+            self.post = post
+        else:
+            self.post = self._post
 
     def progress_bar(self, count_value, block_size, total, size=20, filled='█', empty='░'):
         done = count_value / total * block_size
@@ -39,11 +46,18 @@ class Installer:
         urllib.request.urlretrieve(self.url, f"{exec_dir}\\{self.name}_setup.exe", self.progress_bar)
 
     def _install_thread(self):
+        print(f"Starting the installation of {self.name}")
         subprocess.call(f'{exec_dir}\\{self.name}_setup.exe {self.options}')
+
+        self.post()
+        print(f"Finished installing {self.name}")
 
     def install(self):
         self.thread = threading.Thread(target=self._install_thread())
         self.thread.start()
+
+    def _post(self):
+        pass
 
     def wait(self):
         self.thread.join()
@@ -111,19 +125,11 @@ ADBLOCK_ULTIMATE_URL = f"https://addons.mozilla.org/firefox/downloads/file/41139
 
 # DOWNLOAD
 def download_executables():
-    def progress_bar(count_value, block_size, total, size=20, filled='█', empty='░'):
-        done = count_value / total * block_size
-        sys.stdout.write(f"\r[{round(done * 100)}%] {int(done * size) * filled}{(size - int(done * size)) * empty}")
-
-        if done >= 1:
-            sys.stdout.write("\n")
-
     for i in installers:
         i.download()
 
 
 def install_executables():
-
     def install_python():
         logging.info("Installing Python")
         subprocess.call(
@@ -186,7 +192,7 @@ def __main__():
     download_executables()
 
     logging.info("##### Installing collected files #####")
-    #install_executables()
+    # install_executables()
 
     logging.info("Finished installing all tools")
     input("Press enter to exit")
