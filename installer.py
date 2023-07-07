@@ -30,11 +30,23 @@ class Data:
                          'git_v}-64-bit.exe',
                  firefox_url='https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=nl',
 
-                dark_reader_url = "https://addons.mozilla.org/firefox/downloads/file/4128489/darkreader-{dark_reader_version}.xpi",
-                adblock_ultimate_url = "https://addons.mozilla.org/firefox/downloads/file/4113999/adblocker_ultimate-{adblock_ultimate_url}.xpi"
+                 dark_reader_url = "https://addons.mozilla.org/firefox/downloads/file/4128489/darkreader-{dark_reader_version}.xpi",
+                 adblock_ultimate_url = "https://addons.mozilla.org/firefox/downloads/file/4113999/adblocker_ultimate-{adblock_ultimate_url}.xpi",
+
+                 python_options='/quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0',
+                 pycharm_options='/S /CONFIG={CONFIG} /D=c:\Pycharm',
+                 git_options='/VERYSILENT /NORESTART /LOADINF={CONFIG}',
+                 firefox_options='/S /InstallDirectoryPath="C:\Firefox"',
+
+                 python_config='None',
+                 pycharm_config='config\pycharm.config',
+                 git_config='config\git.config',
+                 firefox_config='None'
                  ):
+
         git_r = requests.get('https://github.com/git-for-windows/git/releases/latest')
-        git_v = git_r.url.split('/')[-1].split('v')[1].split(".windows")[0]
+        git_v = git_r.url.split('/')[-1].split('v')[1].split(".windows")
+        git_v = git_v[0] + git_v[1] if git_v[1] != ".1" else ""
 
         self.exec_dir = resource_path(".\exec\\")
 
@@ -57,29 +69,41 @@ class Data:
         self.dark_reader_url = eval(f"f'{dark_reader_url}'")
         self.adblock_ultimate_url = eval(f"f'{adblock_ultimate_url}'")
 
+        self.python_options = python_options
+        self.pycharm_options = pycharm_options
+        self.git_options = git_options
+        self.firefox_options = firefox_options
+
+        self.python_config = python_config
+        self.pycharm_config = pycharm_config
+        self.git_config = git_config
+        self.firefox_config = firefox_config
+
         self.python_installer = Installer(name='Python',
                                           version=self.python_version,
                                           url=self.python_url,
-                                          options='/quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0')
+                                          options=python_options,
+                                          config=resource_path(python_config))
 
         self.pycharm_installer = Installer(name='Pycharm',
                                            version=self.pycharm_version,
                                            url=self.pycharm_url,
-                                           options='/S /CONFIG={CONFIG} /D=c:\Pycharm',
-                                           config=resource_path('config\pycharm.config'))
+                                           options=pycharm_options,
+                                           config=resource_path(pycharm_config))
 
         self.git_installer = Installer(name='Git',
                                        version=self.git_version,
                                        url=self.git_url,
-                                       options='/VERYSILENT /NORESTART /LOADINF={CONFIG}',
+                                       options=git_options,
                                        post=PostInstall.git,
-                                       config=resource_path('config\git.config'))
+                                       config=resource_path(git_config))
 
         self.firefox_installer = Installer(name='Firefox',
                                            version=self.firefox_version,
                                            url=self.firefox_url,
-                                           options='/S /InstallDirectoryPath="C:\Firefox"',
-                                           post=PostInstall.firefox)
+                                           options=firefox_options,
+                                           post=PostInstall.firefox,
+                                           config=resource_path(git_config))
 
         self.installers = [self.python_installer, self.pycharm_installer, self.git_installer, self.firefox_installer]
 
