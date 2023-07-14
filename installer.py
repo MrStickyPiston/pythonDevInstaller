@@ -17,7 +17,7 @@ class Data:
                  git_email,
                  git_user,
                  python_version='3.11.4',
-                 pycharm_version='2023.1.3',
+                 pycharm_version='2023.1.4',
                  git_version='latest',
                  firefox_version='latest',
 
