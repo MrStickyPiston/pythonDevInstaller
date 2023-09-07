@@ -16,8 +16,8 @@ class Data:
     def __init__(self,
                  git_email,
                  git_user,
-                 python_version='3.11.4',
-                 pycharm_version='2023.1.3',
+                 python_version='3.11.5',
+                 pycharm_version='2023.1.4',
                  git_version='latest',
                  firefox_version='latest',
 
