@@ -11,6 +11,7 @@ import requests
 
 global data
 
+base_url = f"{os.environ['USERPROFILE']}\\Tools"
 
 class Data:
     def __init__(self,
@@ -31,12 +32,12 @@ class Data:
                  firefox_url='https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=nl',
 
                  dark_reader_url = "https://addons.mozilla.org/firefox/downloads/file/4128489/darkreader-{dark_reader_version}.xpi",
-                 adblock_ultimate_url = "https://addons.mozilla.org/firefox/downloads/file/4113999/adblocker_ultimate-{adblock_ultimate_url}.xpi",
+                 adblock_ultimate_url = "https://addons.mozilla.org/firefox/downloads/file/4113999/adblocker_ultimate-{adblock_ultimate_version}.xpi",
 
-                 python_options='/quiet TargetDir="C:\Python311" AppendPath InstallAllUsers=0 Include_launcher=0',
-                 pycharm_options='/S /CONFIG={CONFIG} /D=c:\Pycharm',
-                 git_options='/VERYSILENT /NORESTART /LOADINF={CONFIG}',
-                 firefox_options='/S /InstallDirectoryPath="C:\Firefox"',
+                 python_options=f'/quiet TargetDir="{base_url}\\python\\Python311\\" AppendPath InstallAllUsers=0 Include_launcher=0',
+                 pycharm_options=f'/S /CONFIG={{CONFIG}} /D={base_url}\\pycharm\\',
+                 git_options=f'/VERYSILENT /NORESTART /CONFIG={{CONFIG}} /DIR={base_url}\\git\\',
+                 firefox_options=f'/S /InstallDirectoryPath="{base_url}\\firefox\\"',
 
                  python_config='None',
                  pycharm_config='config\pycharm.config',
