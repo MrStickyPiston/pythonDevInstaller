@@ -17,8 +17,8 @@ class Data:
     def __init__(self,
                  git_email,
                  git_user,
-                 python_version='3.11.5',
-                 pycharm_version='2023.2.1',
+                 python_version='3.12.0',
+                 pycharm_version='2023.2.5',
                  git_version='latest',
                  firefox_version='latest',
 
@@ -47,7 +47,7 @@ class Data:
 
         git_r = requests.get('https://github.com/git-for-windows/git/releases/latest')
         git_v = git_r.url.split('/')[-1].split('v')[1].split(".windows")
-        git_v = git_v[0] + git_v[1] if git_v[1] != ".1" else ""
+        git_v = git_v[0] + (git_v[1] if git_v[1] != ".1" else "")
 
         self.exec_dir = resource_path(".\exec\\")
 
